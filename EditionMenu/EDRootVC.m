@@ -8,15 +8,25 @@
 
 #import "EDRootVC.h"
 #import "Drink.h"
+#import "DBCoreDataStack.h"
 
 @interface EDRootVC ()
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) UIBarButtonItem *rightBarButtonItem;
+@property (nonatomic, strong) DBCoreDataStack *coreDataStack;
 
 @end
 
 @implementation EDRootVC
+
+////////////////////////////////////////////////////////////////////////
+//LAZY INSTANCIATION
+////////////////////////////////////////////////////////////////////////
+- (DBCoreDataStack*) coreDataStack {
+    if (!_coreDataStack) _coreDataStack = [[DBCoreDataStack alloc]init];
+    return _coreDataStack;
+}
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -25,7 +35,8 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    
+    self.managedObjectContext = self.coreDataStack.managedObjectContext;
+
     // Set up the edit and add buttons.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
     
@@ -46,8 +57,13 @@
     [self.tableView reloadData];
 }
 
+- (void) viewDidDisappear:(BOOL)animated {
+    [self.coreDataStack saveContext];
+}
 
 - (void)viewDidUnload {
+    [self.coreDataStack saveContext];
+
     // Release any properties that are loaded in viewDidLoad or can be recreated lazily.
     self.fetchedResultsController = nil;
 }
