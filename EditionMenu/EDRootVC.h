@@ -13,5 +13,8 @@
 @interface EDRootVC : UITableViewController <NSFetchedResultsControllerDelegate, AddViewControllerDelegate>
 
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) NSString *entityName;
+@property (nonatomic, strong) NSArray *sortDescriptors;
+
 
 @end

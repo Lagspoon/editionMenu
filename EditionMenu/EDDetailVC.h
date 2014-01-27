@@ -6,10 +6,11 @@
 //  Copyright (c) 2013 Olivier Delecueillerie. All rights reserved.
 //
 
-#import "Drink.h"
 
 @interface EDDetailVC : UITableViewController
-@property (nonatomic, strong) Drink *drink;
+
+//the object that is detailled (attributes listed) in the table view
+@property (nonatomic, strong) NSManagedObject *object;
 
 @end
 

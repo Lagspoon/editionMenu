@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		090BE6E91891559D00A1DE0C /* DBCoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 090BE6E61891559D00A1DE0C /* DBCoreDataStack.m */; };
+		090BE6EA1891559D00A1DE0C /* menuCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 090BE6E71891559D00A1DE0C /* menuCoreDataModel.xcdatamodeld */; };
+		090BE6ED189155E700A1DE0C /* Drink.m in Sources */ = {isa = PBXBuildFile; fileRef = 090BE6EC189155E700A1DE0C /* Drink.m */; };
+		090BE6F01891679400A1DE0C /* exempleTVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 090BE6EF1891679400A1DE0C /* exempleTVC.m */; };
 		0985BD331831A34900424307 /* editionTableView_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0985BD2F1831A34900424307 /* editionTableView_iPad.storyboard */; };
 		0985BD341831A34900424307 /* editionTableView_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0985BD311831A34900424307 /* editionTableView_iPhone.storyboard */; };
 		099F8567182922630069A971 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 099F8566182922630069A971 /* Foundation.framework */; };
@@ -22,11 +26,6 @@
 		099F8593182922630069A971 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 099F8591182922630069A971 /* InfoPlist.strings */; };
 		099F8595182922630069A971 /* EditionMenuTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F8594182922630069A971 /* EditionMenuTests.m */; };
 		099F85A0182924F20069A971 /* EDRootVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F859F182924F20069A971 /* EDRootVC.m */; };
-		099F85A3182937A20069A971 /* menuCoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 099F85A1182937A20069A971 /* menuCoreDataModel.xcdatamodeld */; };
-		099F85A6182939E90069A971 /* DBCoreDataStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F85A5182939E90069A971 /* DBCoreDataStack.m */; };
-		099F85AE18293E190069A971 /* CategoryDrink.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F85A918293E190069A971 /* CategoryDrink.m */; };
-		099F85AF18293E190069A971 /* Drink.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F85AB18293E190069A971 /* Drink.m */; };
-		099F85B018293E190069A971 /* Meal.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F85AD18293E190069A971 /* Meal.m */; };
 		099F85B318294FDC0069A971 /* EDDetailVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F85B218294FDC0069A971 /* EDDetailVC.m */; };
 		099F85B6182953BA0069A971 /* EDAddVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 099F85B5182953BA0069A971 /* EDAddVC.m */; };
 		099F85B8182954480069A971 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 099F85B7182954480069A971 /* CoreData.framework */; };
@@ -44,6 +43,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		090BE6E51891559D00A1DE0C /* DBCoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DBCoreDataStack.h; path = ../../../spellingForMyKids/addOn/coreDataStack/coreDataStack/DBCoreDataStack.h; sourceTree = "<group>"; };
+		090BE6E61891559D00A1DE0C /* DBCoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DBCoreDataStack.m; path = ../../../spellingForMyKids/addOn/coreDataStack/coreDataStack/DBCoreDataStack.m; sourceTree = "<group>"; };
+		090BE6E81891559D00A1DE0C /* menuCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = menuCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
+		090BE6EB189155E700A1DE0C /* Drink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Drink.h; path = ../../../spellingForMyKids/addOn/coreDataStack/coreDataStack/Drink.h; sourceTree = "<group>"; };
+		090BE6EC189155E700A1DE0C /* Drink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Drink.m; path = ../../../spellingForMyKids/addOn/coreDataStack/coreDataStack/Drink.m; sourceTree = "<group>"; };
+		090BE6EE1891679400A1DE0C /* exempleTVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = exempleTVC.h; path = EditionMenu/exempleTVC.h; sourceTree = "<group>"; };
+		090BE6EF1891679400A1DE0C /* exempleTVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = exempleTVC.m; path = EditionMenu/exempleTVC.m; sourceTree = "<group>"; };
 		0985BD301831A34900424307 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = EditionMenu/Base.lproj/editionTableView_iPad.storyboard; sourceTree = "<group>"; };
 		0985BD321831A34900424307 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = EditionMenu/Base.lproj/editionTableView_iPhone.storyboard; sourceTree = "<group>"; };
 		099F8563182922630069A971 /* EditionMenu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EditionMenu.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,15 +70,6 @@
 		099F8594182922630069A971 /* EditionMenuTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EditionMenuTests.m; sourceTree = "<group>"; };
 		099F859E182924F20069A971 /* EDRootVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDRootVC.h; sourceTree = "<group>"; };
 		099F859F182924F20069A971 /* EDRootVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EDRootVC.m; sourceTree = "<group>"; };
-		099F85A2182937A20069A971 /* menuCoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = menuCoreDataModel.xcdatamodel; sourceTree = "<group>"; };
-		099F85A4182939E90069A971 /* DBCoreDataStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBCoreDataStack.h; sourceTree = "<group>"; };
-		099F85A5182939E90069A971 /* DBCoreDataStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBCoreDataStack.m; sourceTree = "<group>"; };
-		099F85A818293E190069A971 /* CategoryDrink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryDrink.h; sourceTree = "<group>"; };
-		099F85A918293E190069A971 /* CategoryDrink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryDrink.m; sourceTree = "<group>"; };
-		099F85AA18293E190069A971 /* Drink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Drink.h; sourceTree = "<group>"; };
-		099F85AB18293E190069A971 /* Drink.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Drink.m; sourceTree = "<group>"; };
-		099F85AC18293E190069A971 /* Meal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Meal.h; sourceTree = "<group>"; };
-		099F85AD18293E190069A971 /* Meal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Meal.m; sourceTree = "<group>"; };
 		099F85B118294FDC0069A971 /* EDDetailVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDDetailVC.h; sourceTree = "<group>"; };
 		099F85B218294FDC0069A971 /* EDDetailVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EDDetailVC.m; sourceTree = "<group>"; };
 		099F85B4182953BA0069A971 /* EDAddVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EDAddVC.h; sourceTree = "<group>"; };
@@ -107,12 +104,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		090BE6E41891553E00A1DE0C /* imported */ = {
+			isa = PBXGroup;
+			children = (
+				099F85A7182939F00069A971 /* CoreData */,
+			);
+			name = imported;
+			sourceTree = "<group>";
+		};
 		099F855A182922630069A971 = {
 			isa = PBXGroup;
 			children = (
+				090BE6EE1891679400A1DE0C /* exempleTVC.h */,
+				090BE6EF1891679400A1DE0C /* exempleTVC.m */,
 				0985BD2F1831A34900424307 /* editionTableView_iPad.storyboard */,
 				0985BD311831A34900424307 /* editionTableView_iPhone.storyboard */,
 				099F856C182922630069A971 /* EditionMenu */,
+				090BE6E41891553E00A1DE0C /* imported */,
 				099F858E182922630069A971 /* EditionMenuTests */,
 				099F8565182922630069A971 /* Frameworks */,
 				099F8564182922630069A971 /* Products */,
@@ -154,7 +162,6 @@
 				099F8575182922630069A971 /* EDAppDelegate.h */,
 				099F8576182922630069A971 /* EDAppDelegate.m */,
 				099F8581182922630069A971 /* Images.xcassets */,
-				099F85A7182939F00069A971 /* CoreData */,
 				099F856D182922630069A971 /* Supporting Files */,
 			);
 			path = EditionMenu;
@@ -192,17 +199,14 @@
 		099F85A7182939F00069A971 /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
-				099F85A1182937A20069A971 /* menuCoreDataModel.xcdatamodeld */,
-				099F85A4182939E90069A971 /* DBCoreDataStack.h */,
-				099F85A5182939E90069A971 /* DBCoreDataStack.m */,
-				099F85A818293E190069A971 /* CategoryDrink.h */,
-				099F85A918293E190069A971 /* CategoryDrink.m */,
-				099F85AA18293E190069A971 /* Drink.h */,
-				099F85AB18293E190069A971 /* Drink.m */,
-				099F85AC18293E190069A971 /* Meal.h */,
-				099F85AD18293E190069A971 /* Meal.m */,
+				090BE6EB189155E700A1DE0C /* Drink.h */,
+				090BE6EC189155E700A1DE0C /* Drink.m */,
+				090BE6E51891559D00A1DE0C /* DBCoreDataStack.h */,
+				090BE6E61891559D00A1DE0C /* DBCoreDataStack.m */,
+				090BE6E71891559D00A1DE0C /* menuCoreDataModel.xcdatamodeld */,
 			);
 			name = CoreData;
+			path = EditionMenu;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -306,15 +310,14 @@
 			files = (
 				099F8573182922630069A971 /* main.m in Sources */,
 				099F85B6182953BA0069A971 /* EDAddVC.m in Sources */,
-				099F85AF18293E190069A971 /* Drink.m in Sources */,
+				090BE6E91891559D00A1DE0C /* DBCoreDataStack.m in Sources */,
 				099F8577182922630069A971 /* EDAppDelegate.m in Sources */,
-				099F85AE18293E190069A971 /* CategoryDrink.m in Sources */,
-				099F85A6182939E90069A971 /* DBCoreDataStack.m in Sources */,
+				090BE6F01891679400A1DE0C /* exempleTVC.m in Sources */,
 				099F85A0182924F20069A971 /* EDRootVC.m in Sources */,
-				099F85B018293E190069A971 /* Meal.m in Sources */,
-				099F85A3182937A20069A971 /* menuCoreDataModel.xcdatamodeld in Sources */,
 				099F85BB1829808E0069A971 /* EDEditVC.m in Sources */,
+				090BE6ED189155E700A1DE0C /* Drink.m in Sources */,
 				099F85B318294FDC0069A971 /* EDDetailVC.m in Sources */,
+				090BE6EA1891559D00A1DE0C /* menuCoreDataModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -547,13 +550,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		099F85A1182937A20069A971 /* menuCoreDataModel.xcdatamodeld */ = {
+		090BE6E71891559D00A1DE0C /* menuCoreDataModel.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				099F85A2182937A20069A971 /* menuCoreDataModel.xcdatamodel */,
+				090BE6E81891559D00A1DE0C /* menuCoreDataModel.xcdatamodel */,
 			);
-			currentVersion = 099F85A2182937A20069A971 /* menuCoreDataModel.xcdatamodel */;
-			path = menuCoreDataModel.xcdatamodeld;
+			currentVersion = 090BE6E81891559D00A1DE0C /* menuCoreDataModel.xcdatamodel */;
+			name = menuCoreDataModel.xcdatamodeld;
+			path = ../../../spellingForMyKids/addOn/coreDataStack/coreDataStack/menuCoreDataModel.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

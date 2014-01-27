@@ -7,7 +7,6 @@
 //
 
 #import "EDRootVC.h"
-#import "Drink.h"
 #import "DBCoreDataStack.h"
 
 @interface EDRootVC ()
@@ -19,6 +18,7 @@
 @end
 
 @implementation EDRootVC
+
 
 ////////////////////////////////////////////////////////////////////////
 //LAZY INSTANCIATION
@@ -35,6 +35,19 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    //FOR TEST ONLY    ///////////////////////////////////////////////////////////////////////////////
+    self.entityName = @"Drink";
+    NSSortDescriptor *authorDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
+    NSSortDescriptor *titleDescriptor = [[NSSortDescriptor alloc] initWithKey:@"brand" ascending:YES];
+    self.sortDescriptors = @[authorDescriptor, titleDescriptor];
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
     self.managedObjectContext = self.coreDataStack.managedObjectContext;
 
     // Set up the edit and add buttons.
@@ -94,8 +107,9 @@
 - (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     
     // Configure the cell to show the drink title
-    Drink *drink = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = drink.name;
+    NSManagedObject *object= [self.fetchedResultsController objectAtIndexPath:indexPath];
+#warning check the description property suitable
+    cell.textLabel.text = object.description;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -177,14 +191,11 @@
     
     // Create and configure a fetch request with the Book entity.
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"Drink" inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:self.entityName inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     
     // Create the sort descriptors array.
-    NSSortDescriptor *authorDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-    NSSortDescriptor *titleDescriptor = [[NSSortDescriptor alloc] initWithKey:@"brand" ascending:YES];
-    NSArray *sortDescriptors = @[authorDescriptor, titleDescriptor];
-    [fetchRequest setSortDescriptors:sortDescriptors];
+    [fetchRequest setSortDescriptors:self.sortDescriptors];
     
     // Create and initialize the fetch results controller.
     _fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"brand" cacheName:nil];
@@ -273,19 +284,19 @@
         NSManagedObjectContext *addingContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [addingContext setParentContext:[self.fetchedResultsController managedObjectContext]];
         
-        Drink *newDrink = (Drink *)[NSEntityDescription insertNewObjectForEntityForName:@"Drink" inManagedObjectContext:addingContext];
-        addViewController.drink = newDrink;
+        NSManagedObject *newObject = (NSManagedObject *)[NSEntityDescription insertNewObjectForEntityForName:@"Drink" inManagedObjectContext:addingContext];
+        addViewController.object = newObject;
         addViewController.managedObjectContext = addingContext;
     }
     
-    if ([[segue identifier] isEqualToString:@"showSelectedDrink"]) {
+    if ([[segue identifier] isEqualToString:@"showSelectedObject"]) {
         
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        Drink *selectedDrink = (Drink *)[[self fetchedResultsController] objectAtIndexPath:indexPath];
+        NSManagedObject *selectedObject = (NSManagedObject *)[[self fetchedResultsController] objectAtIndexPath:indexPath];
         
         // Pass the selected book to the new view controller.
         EDDetailVC *detailViewController = (EDDetailVC *)[segue destinationViewController];
-        detailViewController.drink = selectedDrink;
+        detailViewController.object = selectedObject;
     }
 }
 

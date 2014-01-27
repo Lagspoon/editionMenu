@@ -12,15 +12,14 @@
 
 @property (nonatomic, weak) IBOutlet UITextField *textField;
 @property (nonatomic, weak) IBOutlet UIDatePicker *datePicker;
-@property (nonatomic, readonly, getter=isEditingDate) BOOL editingDate;
+@property (weak, nonatomic) IBOutlet UISwitch *boolPicker;
+
+@property (nonatomic) NSAttributeType attributeType;
+
 @end
 
 @implementation EDEditVC
 
-{
-    BOOL _hasDeterminedWhetherEditingDate;
-    BOOL _editingDate;
-}
 
 ///////////////////////////////////////////////////////////////////////////////////
 //VIEW LIFECYCLE
@@ -29,32 +28,70 @@
 {
     // Set the title to the user-visible name of the field.
     self.title = self.editedFieldName;
+
+
+    NSEntityDescription *entity = [self.editedObject entity];
+    NSAttributeDescription *attribute = [entity attributesByName][self.attributeName];
+    self.attributeType = [attribute attributeType];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    // Configure the user interface according to state.
-    if (self.editingDate) {
-        
+
+    if (self.attributeType == NSStringAttributeType ) {
+        self.boolPicker.hidden = YES;
+        self.textField.hidden = NO;
+        self.datePicker.hidden = YES;
+
+        self.textField.text = [self.editedObject valueForKey:self.attributeName];
+        self.textField.placeholder = self.title;
+        [self.textField becomeFirstResponder];
+
+    }
+
+    else if ((self.attributeType == NSInteger16AttributeType) ||
+             (self.attributeType == NSInteger32AttributeType) ||
+             (self.attributeType == NSInteger64AttributeType) ||
+             (self.attributeType == NSDecimalAttributeType) ||
+             (self.attributeType == NSDoubleAttributeType) ||
+             (self.attributeType == NSFloatAttributeType)
+             ) {
+        self.boolPicker.hidden = YES;
         self.textField.hidden = YES;
         self.datePicker.hidden = NO;
-        NSDate *date = [self.editedObject valueForKey:self.editedFieldKey];
+
+        NSNumber *value = (NSNumber*) [self.editedObject valueForKey:self.attributeName];
+        self.textField.text = [value stringValue];
+    }
+
+    else if (self.attributeType == NSBooleanAttributeType) {
+        self.boolPicker.hidden = NO;
+        self.textField.hidden = YES;
+        self.datePicker.hidden = YES;
+
+        self.boolPicker.on = (BOOL)[self.editedObject valueForKey:self.attributeName];
+    }
+
+    else if (self.attributeType == NSDateAttributeType) {
+        self.textField.hidden = YES;
+        self.datePicker.hidden = NO;
+        self.boolPicker.hidden = YES;
+        NSDate *date = [self.editedObject valueForKey:self.attributeName];
         if (date == nil) {
             date = [NSDate date];
         }
         self.datePicker.date = date;
     }
-    else {
-        
-        self.textField.hidden = NO;
-        self.datePicker.hidden = YES;
-        self.textField.text = [self.editedObject valueForKey:self.editedFieldKey];
-        self.textField.placeholder = self.title;
-        [self.textField becomeFirstResponder];
+
+    else if(self.attributeType == NSBinaryDataAttributeType) {
+
+
     }
+
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 //SAVE AND CANCEL OPERATIONS
@@ -67,13 +104,13 @@
     [undoManager setActionName:[NSString stringWithFormat:@"%@", self.editedFieldName]];
     
     // Pass current value to the edited object, then pop.
-    if (self.editingDate) {
-        [self.editedObject setValue:self.datePicker.date forKey:self.editedFieldKey];
+    if (self.attributeType == NSDateAttributeType) {
+        [self.editedObject setValue:self.datePicker.date forKey:self.attributeName];
     }
     else {
-        [self.editedObject setValue:self.textField.text forKey:self.editedFieldKey];
+        [self.editedObject setValue:self.textField.text forKey:self.attributeName];
     }
-    
+#warning yo complete (binary and bool)
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -82,39 +119,6 @@
 {
     // Don't pass current value to the edited object, just pop.
     [self.navigationController popViewControllerAnimated:YES];
-}
-
-
-#pragma mark - Manage whether editing a date
-
-- (void)setEditedFieldKey:(NSString *)editedFieldKey
-{
-    if (![_editedFieldKey isEqualToString:editedFieldKey]) {
-        _hasDeterminedWhetherEditingDate = NO;
-        _editedFieldKey = editedFieldKey;
-    }
-}
-
-
-- (BOOL)isEditingDate
-{
-    if (_hasDeterminedWhetherEditingDate == YES) {
-        return _editingDate;
-    }
-    
-    NSEntityDescription *entity = [self.editedObject entity];
-    NSAttributeDescription *attribute = [entity attributesByName][self.editedFieldKey];
-    NSString *attributeClassName = [attribute attributeValueClassName];
-    
-    if ([attributeClassName isEqualToString:@"NSDate"]) {
-        _editingDate = YES;
-    }
-    else {
-        _editingDate = NO;
-    }
-    
-    _hasDeterminedWhetherEditingDate = YES;
-    return _editingDate;
 }
 
 

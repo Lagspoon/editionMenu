@@ -12,11 +12,8 @@
 
 
 @interface EDDetailVC ()
-@property (nonatomic, weak) IBOutlet UILabel *titleLabel;
-@property (nonatomic, weak) IBOutlet UILabel *authorLabel;
-@property (nonatomic, weak) IBOutlet UILabel *copyrightLabel;
+
 @property (nonatomic, strong) NSUndoManager *undoManager;
-- (void)updateInterface;
 - (void)updateRightBarButtonItemState;
 
 
@@ -59,9 +56,8 @@
 - (void)viewWillAppear:(BOOL)animated {
     
     [super viewWillAppear:animated];
-    
+    [[self tableView]reloadData];
     // Redisplay the data.
-    [self updateInterface];
     [self updateRightBarButtonItemState];
 }
 
@@ -107,7 +103,7 @@
         [self cleanUpUndoManager];
         // Save the changes.
         NSError *error;
-        if (![self.drink.managedObjectContext save:&error]) {
+        if (![self.object.managedObjectContext save:&error]) {
             /*
              Replace this implementation with code to handle the error appropriately.
              
@@ -119,17 +115,55 @@
     }
 }
 
-- (void)updateInterface {
-#warning update the fields
-    self.authorLabel.text = self.drink.brand;
-    self.titleLabel.text = self.drink.name;
-    self.copyrightLabel.text = [self.dateFormatter stringFromDate:self.drink.updatedAt];
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+//TABLE VIEW MANAGEMENT
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    // Return the number of sections.
+    return 1;
 }
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    // Return the number of rows in the section. In this case, this is the number of attribute of the entity's managedObject
+    NSEntityDescription *entity = [self.object entity];
+    return [[entity attributesByName] count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+
+    // Configure the cell...
+
+    NSEntityDescription *entity = [self.object entity];
+    NSArray *arrayOfAttributesNames = [[entity attributesByName] allKeys];
+    NSString *attributeName = (NSString *)[arrayOfAttributesNames objectAtIndex:indexPath.row];
+    cell.textLabel.text = attributeName;
+    NSAttributeDescription *attributeDescription = [[entity attributesByName] valueForKey:attributeName];
+    if ([[attributeDescription attributeValueClassName] isEqualToString:@"NSString"]) {
+        cell.detailTextLabel.text = [self.object valueForKey:attributeName];
+    } else {
+    cell.detailTextLabel.text = [self.object description];
+    }
+
+    return cell;
+}
+
 
 - (void)updateRightBarButtonItemState {
     
     // Conditionally enable the right bar button item -- it should only be enabled if the book is in a valid state for saving.
-    self.navigationItem.rightBarButtonItem.enabled = [self.drink validateForUpdate:NULL];
+    self.navigationItem.rightBarButtonItem.enabled = [self.object validateForUpdate:NULL];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -165,6 +199,8 @@
     return NO;
 }
 
+
+
 //////////////////////////////////////////////////////////////////////////////////////////
 //UNDO SUPPORT
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -175,17 +211,17 @@
      If the book's managed object context doesn't already have an undo manager, then create one and set it for the context and self.
      The view controller needs to keep a reference to the undo manager it creates so that it can determine whether to remove the undo manager when editing finishes.
      */
-    if (self.drink.managedObjectContext.undoManager == nil) {
+    if (self.object.managedObjectContext.undoManager == nil) {
         
         NSUndoManager *anUndoManager = [[NSUndoManager alloc] init];
         [anUndoManager setLevelsOfUndo:3];
         self.undoManager = anUndoManager;
         
-        self.drink.managedObjectContext.undoManager = self.undoManager;
+        self.object.managedObjectContext.undoManager = self.undoManager;
     }
     
     // Register as an observer of the book's context's undo manager.
-    NSUndoManager *drinkUndoManager = self.drink.managedObjectContext.undoManager;
+    NSUndoManager *drinkUndoManager = self.object.managedObjectContext.undoManager;
     
     NSNotificationCenter *dnc = [NSNotificationCenter defaultCenter];
     [dnc addObserver:self selector:@selector(undoManagerDidUndo:) name:NSUndoManagerDidUndoChangeNotification object:drinkUndoManager];
@@ -196,13 +232,13 @@
 - (void)cleanUpUndoManager {
     
     // Remove self as an observer.
-    NSUndoManager *drinkUndoManager = self.drink.managedObjectContext.undoManager;
+    NSUndoManager *drinkUndoManager = self.object.managedObjectContext.undoManager;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUndoManagerDidUndoChangeNotification object:drinkUndoManager];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSUndoManagerDidRedoChangeNotification object:drinkUndoManager];
     
     if (drinkUndoManager == self.undoManager) {
-        self.drink.managedObjectContext.undoManager = nil;
+        self.object.managedObjectContext.undoManager = nil;
         self.undoManager = nil;
     }
 }
@@ -210,14 +246,13 @@
 
 - (NSUndoManager *)undoManager {
     
-    return self.drink.managedObjectContext.undoManager;
+    return self.object.managedObjectContext.undoManager;
 }
 
 
 - (void)undoManagerDidUndo:(NSNotification *)notification {
     
     // Redisplay the data.
-    [self updateInterface];
     [self updateRightBarButtonItemState];
 }
 
@@ -225,7 +260,6 @@
 - (void)undoManagerDidRedo:(NSNotification *)notification {
     
     // Redisplay the data.
-    [self updateInterface];
     [self updateRightBarButtonItemState];
 }
 
@@ -254,22 +288,14 @@
         
         EDEditVC *controller = (EDEditVC *)[segue destinationViewController];
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-        
-        controller.editedObject = self.drink;
-        switch (indexPath.row) {
-            case 0: {
-                controller.editedFieldKey = @"name";
-                controller.editedFieldName = NSLocalizedString(@"title", @"display name for title");
-            } break;
-            case 1: {
-                controller.editedFieldKey = @"brand";
-                controller.editedFieldName = NSLocalizedString(@"author", @"display name for author");
-            } break;
-            case 2: {
-                controller.editedFieldKey = @"updatedAt";
-                controller.editedFieldName = NSLocalizedString(@"copyright", @"display name for copyright");
-            } break;
-        }
+        UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:indexPath];
+
+        NSArray *arrayOfAttributesNames = [[[self.object entity] attributesByName] allKeys];
+        NSString *attributeName = (NSString *)[arrayOfAttributesNames objectAtIndex:indexPath.row];
+
+        controller.editedObject = self.object;
+        controller.attributeName = attributeName;
+        controller.editedFieldName = cell.textLabel.text;
     }
 }
 
@@ -281,7 +307,6 @@
     // the user changed the locale (region format) in Settings, so we are notified here to
     // update the date format in the table view cells
     //
-    [self updateInterface];
 }
 
 

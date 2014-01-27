@@ -11,7 +11,10 @@
 
 @interface EDEditVC : UIViewController
 
+
 @property (nonatomic, strong) NSManagedObject *editedObject;
-@property (nonatomic, strong) NSString *editedFieldKey;
+
+@property (nonatomic, strong) NSString *attributeName;
+//fieldName is the human reading field name
 @property (nonatomic, strong) NSString *editedFieldName;
 @end
