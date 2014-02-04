@@ -9,12 +9,14 @@
 #import "EDRootVC.h"
 #import "DBCoreDataStack.h"
 
+#define entityDescriptionKey @"entityDescription"
+#define sortDescriptorKey @"sortDescriptor"
+#define managedObjectContextKey @"managedObjectContext"
+
 @interface EDRootVC ()
 
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) UIBarButtonItem *rightBarButtonItem;
-@property (nonatomic, strong) DBCoreDataStack *coreDataStack;
-
 @end
 
 @implementation EDRootVC
@@ -23,11 +25,16 @@
 ////////////////////////////////////////////////////////////////////////
 //LAZY INSTANCIATION
 ////////////////////////////////////////////////////////////////////////
-- (DBCoreDataStack*) coreDataStack {
+/*- (DBCoreDataStack*) coreDataStack {
     if (!_coreDataStack) _coreDataStack = [[DBCoreDataStack alloc]init];
     return _coreDataStack;
-}
+}*/
 
+
+- (NSManagedObjectContext *) managedObjectContext {
+    if (!_managedObjectContext) _managedObjectContext = (NSManagedObjectContext *)[self.entityDictionary valueForKey:managedObjectContextKey];
+    return _managedObjectContext;
+}
 
 ////////////////////////////////////////////////////////////////////////
 //LIFE CYCLE
@@ -36,22 +43,8 @@
     
     [super viewDidLoad];
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-    //FOR TEST ONLY    ///////////////////////////////////////////////////////////////////////////////
-    self.entityName = @"Drink";
-    NSSortDescriptor *authorDescriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES];
-    NSSortDescriptor *titleDescriptor = [[NSSortDescriptor alloc] initWithKey:@"brand" ascending:YES];
-    self.sortDescriptors = @[authorDescriptor, titleDescriptor];
-    //////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-    self.managedObjectContext = self.coreDataStack.managedObjectContext;
-
     // Set up the edit and add buttons.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    //self.navigationItem.leftBarButtonItem = self.editButtonItem;
     
     NSError *error;
     if (![[self fetchedResultsController] performFetch:&error]) {
@@ -71,11 +64,12 @@
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
-    [self.coreDataStack saveContext];
+#warning is it necessary to save context ?
+
 }
 
 - (void)viewDidUnload {
-    [self.coreDataStack saveContext];
+#warning is it necessary to save context ?
 
     // Release any properties that are loaded in viewDidLoad or can be recreated lazily.
     self.fetchedResultsController = nil;
@@ -109,7 +103,7 @@
     // Configure the cell to show the drink title
     NSManagedObject *object= [self.fetchedResultsController objectAtIndexPath:indexPath];
 #warning check the description property suitable
-    cell.textLabel.text = object.description;
+    cell.textLabel.text = [object valueForKey:[self.entityDictionary valueForKey:@"textLabel"]];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -140,17 +134,16 @@
         
         NSError *error;
         if (![context save:&error]) {
-            /*
-             Replace this implementation with code to handle the error appropriately.
+
+            // Replace this implementation with code to handle the error appropriately.
              
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-             */
+            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
         }
     }
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 //TABLE VIEW EDITING
@@ -159,21 +152,6 @@
     
     // The table view should not be re-orderable.
     return NO;
-}
-
-
-- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
-    
-    [super setEditing:editing animated:animated];
-    
-    if (editing) {
-        self.rightBarButtonItem = self.navigationItem.rightBarButtonItem;
-        self.navigationItem.rightBarButtonItem = nil;
-    }
-    else {
-        self.navigationItem.rightBarButtonItem = self.rightBarButtonItem;
-        self.rightBarButtonItem = nil;
-    }
 }
 
 
@@ -191,14 +169,14 @@
     
     // Create and configure a fetch request with the Book entity.
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:self.entityName inManagedObjectContext:self.managedObjectContext];
-    [fetchRequest setEntity:entity];
+    [fetchRequest setEntity:[self.entityDictionary valueForKey:entityDescriptionKey]];
     
     // Create the sort descriptors array.
-    [fetchRequest setSortDescriptors:self.sortDescriptors];
+    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:[self.entityDictionary valueForKey:sortDescriptorKey] ascending:YES];
+    [fetchRequest setSortDescriptors:@[sortDescriptor]];
     
     // Create and initialize the fetch results controller.
-    _fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:@"brand" cacheName:nil];
+    _fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
     _fetchedResultsController.delegate = self;
     
     return _fetchedResultsController;
@@ -267,7 +245,7 @@
 ////////////////////////////////////////////////////////////////////////
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    if ([[segue identifier] isEqualToString:@"addDrink"]) {
+    if ([[segue identifier] isEqualToString:@"addObject"]) {
         
         /*
          The destination view controller for this segue is an AddViewController to manage addition of the book.
@@ -280,13 +258,14 @@
         EDAddVC *addViewController = (EDAddVC *)[navController topViewController];
         addViewController.delegate = self;
         
-        // Create a new managed object context for the new book; set its parent to the fetched results controller's context.
+        // Create a new managed object context for the new object; set its parent to the fetched results controller's context.
         NSManagedObjectContext *addingContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [addingContext setParentContext:[self.fetchedResultsController managedObjectContext]];
         
-        NSManagedObject *newObject = (NSManagedObject *)[NSEntityDescription insertNewObjectForEntityForName:@"Drink" inManagedObjectContext:addingContext];
+        NSManagedObject *newObject = (NSManagedObject *)[NSEntityDescription insertNewObjectForEntityForName:[[self.entityDictionary valueForKey:entityDescriptionKey] name] inManagedObjectContext:addingContext];
         addViewController.object = newObject;
         addViewController.managedObjectContext = addingContext;
+        addViewController.entityDictionary = self.entityDictionary;
     }
     
     if ([[segue identifier] isEqualToString:@"showSelectedObject"]) {
@@ -297,6 +276,9 @@
         // Pass the selected book to the new view controller.
         EDDetailVC *detailViewController = (EDDetailVC *)[segue destinationViewController];
         detailViewController.object = selectedObject;
+        detailViewController.entityDictionary = self.entityDictionary;
+
+
     }
 }
 

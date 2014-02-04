@@ -7,7 +7,6 @@
 //
 
 #import "EDDetailVC.h"
-#import "Drink.h"
 #import "EDEditVC.h"
 
 
@@ -145,17 +144,16 @@
 
     // Configure the cell...
 
-    NSEntityDescription *entity = [self.object entity];
-    NSArray *arrayOfAttributesNames = [[entity attributesByName] allKeys];
-    NSString *attributeName = (NSString *)[arrayOfAttributesNames objectAtIndex:indexPath.row];
-    cell.textLabel.text = attributeName;
-    NSAttributeDescription *attributeDescription = [[entity attributesByName] valueForKey:attributeName];
-    if ([[attributeDescription attributeValueClassName] isEqualToString:@"NSString"]) {
-        cell.detailTextLabel.text = [self.object valueForKey:attributeName];
-    } else {
-    cell.detailTextLabel.text = [self.object description];
+    NSArray *attributesArray = [[[self.object entity] attributesByName] allKeys];
+    for (NSString *attributeName in attributesArray) {
+        if ([[self.entityDictionary valueForKey:attributeName] valueForKey:@"rank"] == [NSNumber numberWithInteger:indexPath.row]) {
+            if ([self.object valueForKey:attributeName]) {
+                cell.textLabel.text = [self.object valueForKey:attributeName];
+            } else {
+                cell.textLabel.text = attributeName;
+            }
+        }
     }
-
     return cell;
 }
 
@@ -185,6 +183,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (self.editing) {
+        UINavigationController *navigationController = [self navigationController];
+        UIStoryboard *writingToolStoryboard = [UIStoryboard storyboardWithName:<#(NSString *)#> bundle:<#(NSBundle *)#>]
         [self performSegueWithIdentifier:@"editSelectedItem" sender:self];
     }
 }
@@ -208,7 +208,7 @@
 - (void)setUpUndoManager {
     
     /*
-     If the book's managed object context doesn't already have an undo manager, then create one and set it for the context and self.
+     If the object's managed object context doesn't already have an undo manager, then create one and set it for the context and self.
      The view controller needs to keep a reference to the undo manager it creates so that it can determine whether to remove the undo manager when editing finishes.
      */
     if (self.object.managedObjectContext.undoManager == nil) {
@@ -294,7 +294,7 @@
         NSString *attributeName = (NSString *)[arrayOfAttributesNames objectAtIndex:indexPath.row];
 
         controller.editedObject = self.object;
-        controller.attributeName = attributeName;
+        controller.attributeDescription = [[[self.object entity] attributesByName] valueForKey:attributeName];
         controller.editedFieldName = cell.textLabel.text;
     }
 }

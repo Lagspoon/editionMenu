@@ -11,6 +11,7 @@
 
 //the object that is detailled (attributes listed) in the table view
 @property (nonatomic, strong) NSManagedObject *object;
+@property (nonatomic, strong) NSDictionary *entityDictionary;
 
 @end
 

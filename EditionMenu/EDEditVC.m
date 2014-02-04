@@ -30,9 +30,7 @@
     self.title = self.editedFieldName;
 
 
-    NSEntityDescription *entity = [self.editedObject entity];
-    NSAttributeDescription *attribute = [entity attributesByName][self.attributeName];
-    self.attributeType = [attribute attributeType];
+    self.attributeType = [self.attributeDescription attributeType];
 
 }
 
@@ -45,7 +43,7 @@
         self.textField.hidden = NO;
         self.datePicker.hidden = YES;
 
-        self.textField.text = [self.editedObject valueForKey:self.attributeName];
+        self.textField.text = [self.editedObject valueForKey:[self.attributeDescription name]];
         self.textField.placeholder = self.title;
         [self.textField becomeFirstResponder];
 
@@ -59,10 +57,10 @@
              (self.attributeType == NSFloatAttributeType)
              ) {
         self.boolPicker.hidden = YES;
-        self.textField.hidden = YES;
-        self.datePicker.hidden = NO;
+        self.textField.hidden = NO;
+        self.datePicker.hidden = YES;
 
-        NSNumber *value = (NSNumber*) [self.editedObject valueForKey:self.attributeName];
+        NSNumber *value = (NSNumber*) [self.editedObject valueForKey:[self.attributeDescription name]];
         self.textField.text = [value stringValue];
     }
 
@@ -71,14 +69,14 @@
         self.textField.hidden = YES;
         self.datePicker.hidden = YES;
 
-        self.boolPicker.on = (BOOL)[self.editedObject valueForKey:self.attributeName];
+        self.boolPicker.on = (BOOL)[self.editedObject valueForKey:[self.attributeDescription name]];
     }
 
     else if (self.attributeType == NSDateAttributeType) {
         self.textField.hidden = YES;
         self.datePicker.hidden = NO;
         self.boolPicker.hidden = YES;
-        NSDate *date = [self.editedObject valueForKey:self.attributeName];
+        NSDate *date = [self.editedObject valueForKey:[self.attributeDescription name]];
         if (date == nil) {
             date = [NSDate date];
         }
@@ -105,10 +103,10 @@
     
     // Pass current value to the edited object, then pop.
     if (self.attributeType == NSDateAttributeType) {
-        [self.editedObject setValue:self.datePicker.date forKey:self.attributeName];
+        [self.editedObject setValue:self.datePicker.date forKey:[self.attributeDescription name]];
     }
     else {
-        [self.editedObject setValue:self.textField.text forKey:self.attributeName];
+        [self.editedObject setValue:self.textField.text forKey:[self.attributeDescription name]];
     }
 #warning yo complete (binary and bool)
     [self.navigationController popViewControllerAnimated:YES];

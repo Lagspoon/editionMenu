@@ -14,7 +14,7 @@
 
 @property (nonatomic, strong) NSManagedObject *editedObject;
 
-@property (nonatomic, strong) NSString *attributeName;
+@property (nonatomic, strong) NSAttributeDescription *attributeDescription;
 //fieldName is the human reading field name
 @property (nonatomic, strong) NSString *editedFieldName;
 @end
