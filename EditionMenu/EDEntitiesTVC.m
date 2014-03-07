@@ -108,9 +108,9 @@
 // In a story board-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    EDRootVC *destinationVC = (EDRootVC *)[segue destinationViewController];
-    destinationVC.entityDictionary = self.entitySelectedDictionary;
-    destinationVC.managedObjectContext=self.managedObjectContext;
+    //EDRootVC *destinationVC = (EDRootVC *)[segue destinationViewController];
+    //destinationVC.entityDictionary = self.entitySelectedDictionary;
+    //destinationVC.managedObjectContext=self.managedObjectContext;
 }
 
 

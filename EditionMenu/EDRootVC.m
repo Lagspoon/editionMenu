@@ -9,33 +9,21 @@
 #import "EDRootVC.h"
 #import "DBCoreDataStack.h"
 
-#define entityDescriptionKey @"entityDescription"
-#define sortDescriptorKey @"sortDescriptor"
-#define managedObjectContextKey @"managedObjectContext"
-
 @interface EDRootVC ()
 
+@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, strong) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) UIBarButtonItem *rightBarButtonItem;
+
 @end
 
 @implementation EDRootVC
 
 
-////////////////////////////////////////////////////////////////////////
-//LAZY INSTANCIATION
-////////////////////////////////////////////////////////////////////////
-/*- (DBCoreDataStack*) coreDataStack {
-    if (!_coreDataStack) _coreDataStack = [[DBCoreDataStack alloc]init];
-    return _coreDataStack;
-}*/
-
-
 - (NSManagedObjectContext *) managedObjectContext {
-    if (!_managedObjectContext) _managedObjectContext = (NSManagedObjectContext *)[self.entityDictionary valueForKey:managedObjectContextKey];
+    if (!_managedObjectContext) _managedObjectContext = [[DBCoreDataStack alloc] init].managedObjectContext;
     return _managedObjectContext;
 }
-
 ////////////////////////////////////////////////////////////////////////
 //LIFE CYCLE
 ////////////////////////////////////////////////////////////////////////
@@ -43,9 +31,11 @@
     
     [super viewDidLoad];
 
-    // Set up the edit and add buttons.
-    //self.navigationItem.leftBarButtonItem = self.editButtonItem;
-    
+    // Set up the add buttons.
+    UINavigationItem *navigationItem = [[self tabBarController] navigationItem];
+    navigationItem.title=@"Words list";
+    navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addObject)];
+
     NSError *error;
     if (![[self fetchedResultsController] performFetch:&error]) {
         /*
@@ -98,24 +88,29 @@
 
 
 // Customize the appearance of table view cells.
-- (void)configureCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    
-    // Configure the cell to show the drink title
-    NSManagedObject *object= [self.fetchedResultsController objectAtIndexPath:indexPath];
+- (UITableViewCell *)configureCellFrom:(UITableView *)tableView withObject:(NSManagedObject *) object atIndexPath:(NSIndexPath *) indexPath {
+    static NSString *CellIdentifier = @"Cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+
 #warning check the description property suitable
-    cell.textLabel.text = [object valueForKey:[self.entityDictionary valueForKey:@"textLabel"]];
+    cell.textLabel.text = [object valueForKey:@"name"];
+    return cell;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    
+    NSManagedObject *object= [self.fetchedResultsController objectAtIndexPath:indexPath];
+
     // Configure the cell.
-    [self configureCell:cell atIndexPath:indexPath];
-    return cell;
+    return [self configureCellFrom:tableView withObject:object atIndexPath:indexPath];
 }
 
+
+- (NSIndexPath *) tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    self.objectSelected = [self.fetchedResultsController objectAtIndexPath:indexPath];
+
+    return indexPath;
+}
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     
@@ -169,10 +164,10 @@
     
     // Create and configure a fetch request with the Book entity.
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-    [fetchRequest setEntity:[self.entityDictionary valueForKey:entityDescriptionKey]];
+    [fetchRequest setEntity:[NSEntityDescription entityForName:[self entityName] inManagedObjectContext:self.managedObjectContext]];
     
     // Create the sort descriptors array.
-    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:[self.entityDictionary valueForKey:sortDescriptorKey] ascending:YES];
+    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:[self sortDescriptor] ascending:YES];
     [fetchRequest setSortDescriptors:@[sortDescriptor]];
     
     // Create and initialize the fetch results controller.
@@ -208,7 +203,7 @@
             break;
             
         case NSFetchedResultsChangeUpdate:
-            [self configureCell:[tableView cellForRowAtIndexPath:indexPath] atIndexPath:indexPath];
+            [self configureCellFrom:tableView withObject:anObject atIndexPath:indexPath];
             break;
             
         case NSFetchedResultsChangeMove:
@@ -262,10 +257,9 @@
         NSManagedObjectContext *addingContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
         [addingContext setParentContext:[self.fetchedResultsController managedObjectContext]];
         
-        NSManagedObject *newObject = (NSManagedObject *)[NSEntityDescription insertNewObjectForEntityForName:[[self.entityDictionary valueForKey:entityDescriptionKey] name] inManagedObjectContext:addingContext];
+        NSManagedObject *newObject = (NSManagedObject *)[NSEntityDescription insertNewObjectForEntityForName:[[NSEntityDescription entityForName:[self entityName] inManagedObjectContext:addingContext] name] inManagedObjectContext:addingContext];
         addViewController.object = newObject;
         addViewController.managedObjectContext = addingContext;
-        addViewController.entityDictionary = self.entityDictionary;
     }
     
     if ([[segue identifier] isEqualToString:@"showSelectedObject"]) {
@@ -276,12 +270,20 @@
         // Pass the selected book to the new view controller.
         EDDetailVC *detailViewController = (EDDetailVC *)[segue destinationViewController];
         detailViewController.object = selectedObject;
-        detailViewController.entityDictionary = self.entityDictionary;
 
 
     }
 }
 
+
+////////////////////////////////////////////////////////////////////////
+//TRIGERRED ACTION
+////////////////////////////////////////////////////////////////////////
+
+- (void) addObject {
+
+
+}
 
 ////////////////////////////////////////////////////////////////////////
 //ADD CONTROLLER DELEGATE
@@ -323,5 +325,12 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (NSString *) entityName {
+    return nil;
+}
+
+- (NSString *) sortDescriptor {
+    return nil;
+}
 
 @end

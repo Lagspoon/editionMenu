@@ -195,9 +195,9 @@
         WTViewController *viewController = [writingToolStoryboard instantiateViewControllerWithIdentifier:@"default"];
 
         NSDictionary * attributeDictionary = (NSDictionary *)[self.entityDictionary valueForKey:[self attributeNameAtIndexPath:indexPath]];
-        viewController.attributeDictionary = [NSDictionary dictionaryWithDictionary:attributeDictionary];
+        viewController.fieldLabel = [[NSDictionary dictionaryWithDictionary:attributeDictionary] valueForKey:@"Label"];
         viewController.editedObject = self.object;
-        viewController.selectedAttribute = [[[self.object entity] attributesByName] valueForKey:[self attributeNameAtIndexPath:indexPath]];
+       // viewController.selectedAttribute = [[[self.object entity] attributesByName] valueForKey:[self attributeNameAtIndexPath:indexPath]];
 
         
         [navigationController pushViewController:viewController animated:YES];

@@ -10,9 +10,8 @@
 #import <CoreData/CoreData.h>
 #import "EDAddVC.h"
 
-@interface EDRootVC : UITableViewController <NSFetchedResultsControllerDelegate, AddViewControllerDelegate>
+@interface EDRootVC : UITableViewController <NSFetchedResultsControllerDelegate, AddViewControllerDelegate, UITableViewDelegate>
 
-@property (nonatomic, strong) NSDictionary *entityDictionary;
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) NSManagedObject *objectSelected;
 
 @end
